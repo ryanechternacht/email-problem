@@ -12,9 +12,9 @@
                   {:email-address "M@lice.com", :spam-score 0.3}])
 
 (def default-settings {:spam-score-limit 0.3
-                       :limit-per-email 10
-                       :running-mean {:limit 0.3
-                                      :lookback 3}
+                       :limit-per-email 1
+                       :running-mean {:limit 0.1
+                                      :lookback 100}
                        :global-mean 0.05})
 
 (defn generate-skip-spammy-emails-xf [spam-limit]
