@@ -1,5 +1,4 @@
-(ns emails.load-emails
-  (:require [clojure.java.io :as io]))
+(ns emails.load-emails)
 
 (defn load-emails-from-file
   [file]

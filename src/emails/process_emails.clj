@@ -77,10 +77,3 @@
 (def my-xf (generate-xf {}))
 
 (into [] my-xf test-emails)
-
-;;; TESTING
-;;; 
-
-(def running-mean (generate-running-mean-xf 0.1 3))
-
-(into [] running-mean test-emails)

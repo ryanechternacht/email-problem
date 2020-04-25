@@ -1,4 +1,4 @@
-(ns emails.test.spec.emails
+(ns emails.spec.emails
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]))
 
@@ -27,11 +27,3 @@
 
 (s/def ::email-record
   (s/keys :req-un [::email-address ::spam-score]))
-
-;; TODO break to an external file
-(defn make-sample-email-file
-  "generates email records based on the ::email-record spec"
-  [file num]
-  (with-open [w (clojure.java.io/writer file)]
-    (binding [*out* w]
-      (pr (gen/sample (s/gen ::email-record) num)))))
