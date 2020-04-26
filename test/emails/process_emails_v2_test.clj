@@ -16,22 +16,24 @@
 
 (deftest genereate-skip-spammy-emails-xf-test
   (testing "Generate Skip Spammy Emails Xf Test"
-    (let [status (atom {:skipped-causes {:too-spammy 0} :other 4})
+    (let [status (atom {:accepted 0 :rejected {:too-spammy 0} :other 4})
           xf (pe/generate-skip-spammy-emails-xf status 0.5)
           result (into [] xf test-emails)]
       (is (= 6 (count result)) "spammy emails are skipped")
-      (is (= 5 (get-in @status [:skipped-causes :too-spammy]))
+      (is (= 5 (get-in @status [:rejected :too-spammy]))
           "skipped causes is updated correclty")
+      (is (= 6 (:accepted @status)) "accepted is updated correctly")
       (is (= 4 (:other @status)) "other settings are unaffected"))))
 
 (deftest generate-limit-per-email-xf-test
   (testing "Generate Limit Per Email Xf Test"
-    (let [status (atom {:skipped-causes {:limit-per-user 0} :other 4})
+    (let [status (atom {:accepted 0 :rejected {:limit-per-user 0} :other 4})
           xf (pe/generate-limit-per-email-xf status 2)
           result (into [] xf test-emails)]
       (is (= 6 (count result)) "don't over-email people")
-      (is (= 5 (get-in @status [:skipped-causes :limit-per-user]))
+      (is (= 5 (get-in @status [:rejected :limit-per-user]))
           "skipped causes is updated correclty")
+      (is (= 6 (:accepted @status)) "accepted is updated correctly")
       (is (= 4 (:other @status)) "other settings are unaffected"))))
 
 (deftest add-to-circle-vec-test
@@ -44,10 +46,11 @@
 
 (deftest generate-running-mean-xf-test
   (testing "Generate Running Mean Xf Test"
-    (let [status (atom {:skipped-causes {:mean 0} :other 4})
+    (let [status (atom {:accepted 0 :rejected {:mean 0} :other 4})
           xf (pe/generate-running-mean-xf status :mean 0.4 2)
           result (into [] xf test-emails)]
       (is (= 6 (count result)) "running mean works properly")
-      (is (= 5 (get-in @status [:skipped-causes :mean]))
+      (is (= 5 (get-in @status [:rejected :mean]))
           "skipped causes is updated correctly")
+      (is (= 6 (:accepted @status)) "accepted is updated correctly")
       (is (= 4 (:other @status)) "other settings are unaffected"))))
