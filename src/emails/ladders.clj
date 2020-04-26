@@ -1,20 +1,11 @@
 (ns emails.ladders
   (:require [emails.load-emails :as le]
             [emails.process-emails :as pe]
-            [clojure.core.async :refer [go chan <! >! <!! >!! alts!]])
+            [emails.process-emails-v2 :as pe-v2]
+            [clojure.core.async :refer [go chan <! >! <!! >!!]])
   (:gen-class))
 
 (def defaults {:file "resources/sample-emails-100"})
-
-;; (def xf (pe/generate-xf))
-
-;; (def potential-emails (chan 10 xf))
-
-;; (def to-email (atom []))
-
-;; (go (while true
-;;       (let [email (<! potential-emails)]
-;;         (swap! to-email conj email))))
 
 (defn- run-simple []
   (let [file (:file defaults)
@@ -23,16 +14,35 @@
          le/load-emails-from-file
          (into [] xf))))
 
+(defn- format-status [status]
+  (let [{:keys [accepted rejected]} status
+        rejected-count (->> rejected vals (reduce +))]
+    (format "Accepted: %d | Rejected: %d"
+            accepted rejected-count)))
+
+(defn- run-advanced []
+  (let [status (atom {})
+        xf (pe-v2/generate-xf status)
+        potential-emails (chan 10 xf)
+        to-email (atom [])]
+    ;; setup channel reading
+    (go (while true
+          (let [email (<! potential-emails)]
+            (swap! to-email conj email))))
+    ;; write to channel
+    (let [email-chunks (->> defaults
+                            :file
+                            le/load-emails-from-file
+                            (partition 10 10 []))]
+      (doseq [chunk email-chunks]
+        (prn (format-status @status))
+        (doseq [e chunk]
+          (>!! potential-emails e))
+        (Thread/sleep 2000))
+      (prn (format-status @status)))))
 
 
 (defn -main
   [& args]
-  (run-simple))
-
-;; (defn -main
-;;   "I don't do a whole lot ... yet."
-;;   [& args]
-;;   (let [emails (le/load-emails-from-file (:file defaults))]
-;;     (for [e emails]
-;;       (go
-;;         (>! potential-emails e)))))
+;;   (run-simple)
+  (run-advanced))
