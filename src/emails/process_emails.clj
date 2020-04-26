@@ -1,16 +1,5 @@
 (ns emails.process-emails)
 
-;; for simple tests
-(def test-emails [{:email-address "7@indeediot.com", :spam-score 0.0}
-                  {:email-address "M@lice.com", :spam-score 1}
-                  {:email-address "7@indeediot.com", :spam-score 0.0}
-                  {:email-address "M@lice.com", :spam-score 0.1}
-                  {:email-address "I@monstrous.com", :spam-score 0.1}
-                  {:email-address "M@lice.com", :spam-score 0.1}
-                  {:email-address "M@lice.com", :spam-score 0.2}
-                  {:email-address "b1@lice.com", :spam-score 0.0}
-                  {:email-address "M@lice.com", :spam-score 0.3}])
-
 (def default-settings {:spam-score-limit 0.3
                        :limit-per-email 1
                        :running-mean {:limit 0.1
@@ -61,19 +50,15 @@
                 (xf result input))
               result))))))))
 
-
-
-(defn generate-xf [settings]
-  (let [{:keys [spam-score-limit
-                limit-per-email
-                running-mean
-                global-mean]} (merge default-settings settings)]
-    (comp
-     (generate-skip-spammy-emails-xf spam-score-limit)
-     (generate-limit-per-email-xf limit-per-email)
-     (generate-running-mean-xf global-mean)
-     (generate-running-mean-xf (:limit running-mean) (:lookback running-mean)))))
-
-(def my-xf (generate-xf {}))
-
-(into [] my-xf test-emails)
+(defn generate-xf
+  ([] (generate-xf {}))
+  ([settings]
+   (let [{:keys [spam-score-limit
+                 limit-per-email
+                 running-mean
+                 global-mean]} (merge default-settings settings)]
+     (comp
+      (generate-skip-spammy-emails-xf spam-score-limit)
+      (generate-limit-per-email-xf limit-per-email)
+      (generate-running-mean-xf global-mean)
+      (generate-running-mean-xf (:limit running-mean) (:lookback running-mean))))))
