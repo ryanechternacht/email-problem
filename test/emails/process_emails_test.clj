@@ -1,5 +1,5 @@
 (ns emails.process-emails-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [emails.process-emails :as pe]))
 
 (def test-emails [{:email-address "hello3@hello.com" :spam-score 0.9}
