@@ -14,11 +14,21 @@
          le/load-emails-from-file
          (into [] xf))))
 
-(defn- format-status [status]
-  (let [{:keys [accepted rejected]} status
+(defn- format-status [to-email status]
+  (let [accepted (count to-email)
+        {:keys [too-spammy
+                limit-per-user
+                global-mean
+                running-mean] :as rejected} (:rejected status)
         rejected-count (->> rejected vals (reduce +))]
-    (format "Accepted: %d | Rejected: %d"
-            accepted rejected-count)))
+    (format (str "Accepted: %d\r\n"
+                 "Rejected: %d\r\n"
+                 "- Too Spammy: %d\r\n"
+                 "- User Limit: %d\r\n"
+                 "- Global Mean: %d\r\n"
+                 "- Running Mean: %d\r\n")
+            accepted rejected-count too-spammy
+            limit-per-user global-mean running-mean)))
 
 (defn- run-advanced []
   (let [status (atom {})
@@ -35,11 +45,11 @@
                             le/load-emails-from-file
                             (partition 10 10 []))]
       (doseq [chunk email-chunks]
-        (prn (format-status @status))
+        (println (format-status @to-email @status))
         (doseq [e chunk]
           (>!! potential-emails e))
-        (Thread/sleep 2000))
-      (prn (format-status @status)))))
+        (Thread/sleep 1000))
+      (println (format-status @to-email @status)))))
 
 
 (defn -main
