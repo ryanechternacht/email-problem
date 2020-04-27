@@ -1,4 +1,4 @@
-(ns resources.generate-test-emails
+(ns emails.generate-test-emails
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]))
             ;; [emails.spec.emails :as emails-spec]
@@ -38,3 +38,7 @@
   (with-open [w (clojure.java.io/writer file)]
     (binding [*out* w]
       (pr (gen/sample (s/gen ::email-record) num)))))
+
+(defn make-sample-emails
+  ([] (make-sample-emails 100))
+  ([num] (gen/sample (s/gen ::email-record) num)))

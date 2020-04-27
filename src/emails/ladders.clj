@@ -2,10 +2,13 @@
   (:require [emails.load-emails :as le]
             [emails.process-emails :as pe]
             [emails.process-emails-v2 :as pe-v2]
+            [emails.generate-test-emails :as gte]
             [clojure.core.async :refer [go chan <! >! <!! >!!]])
   (:gen-class))
 
-(def defaults {:file "resources/sample-emails-100"})
+(def defaults {:file "resources/sample-emails-100"
+               :emails 100000
+               :partitions 10000})
 
 (defn- run-simple []
   (let [file (:file defaults)
@@ -34,21 +37,19 @@
   (let [status (atom {})
         xf (pe-v2/generate-xf status)
         potential-emails (chan 10 xf)
-        to-email (atom [])]
+        to-email (atom [])
+        {:keys [emails partitions]} defaults]
     ;; setup channel reading
     (go (while true
           (let [email (<! potential-emails)]
             (swap! to-email conj email))))
     ;; write to channel
-    (let [email-chunks (->> defaults
-                            :file
-                            le/load-emails-from-file
-                            (partition 10 10 []))]
+    (let [email-chunks (->> (gte/make-sample-emails emails)
+                            (partition partitions partitions []))]
       (doseq [chunk email-chunks]
         (println (format-status @to-email @status))
         (doseq [e chunk]
-          (>!! potential-emails e))
-        (Thread/sleep 1000))
+          (>!! potential-emails e)))
       (println (format-status @to-email @status)))))
 
 
