@@ -12,5 +12,5 @@
    :main-opts ["-m" "cognitect.test-runner"
                "-d" "test"]}
   :uberjar {:extra-deps {seancorfield/depstar {:mvn/version "1.0.94"}}
-            :main-opts ["-m" "hf.depstar.uberjar" "ladders.jar"
-                        "-C" "-m" "emails.ladders"]}}}
+            :main-opts ["-m" "hf.depstar.uberjar" "emails.jar"
+                        "-C" "-m" "emails.core"]}}}

@@ -1,4 +1,4 @@
-(ns emails.ladders
+(ns emails.core
   (:require [emails.load-emails :as le]
             [emails.process-emails :as pe]
             [emails.process-emails-v2 :as pe-v2]
