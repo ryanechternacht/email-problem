@@ -34,7 +34,8 @@ The main code sets up the channels and atoms, generates emails using the spec, a
 
 ### Thoughts
 
-Performance seems a bit slow. The culprit appears to be the global-mean transduction step. This makes some sense, since it's essentially O(n^2). 
+1) Performance seems a bit slow. The culprit appears to be the global-mean transduction step. This makes some sense, since it's essentially O(n^2). 
+2) I'm surprised that more emails don't get rejected for being too spammy (spam score > 0.3). My tests and general inspection show the transducer works correctly, but if we're generating data between 0 and 1, I would expect that distribution to be even and therefore, that more emails would get rejected.
 
 ## License
 

@@ -17,10 +17,10 @@
 (deftest genereate-skip-spammy-emails-xf-test
   (testing "Generate Skip Spammy Emails Xf Test"
     (let [status (atom {:rejected {:too-spammy 0} :other 4})
-          xf (pe/generate-skip-spammy-emails-xf status 0.5)
+          xf (pe/generate-skip-spammy-emails-xf status 0.7)
           result (into [] xf test-emails)]
-      (is (= 6 (count result)) "spammy emails are skipped")
-      (is (= 5 (get-in @status [:rejected :too-spammy]))
+      (is (= 8 (count result)) "spammy emails are skipped")
+      (is (= 3 (get-in @status [:rejected :too-spammy]))
           "skipped causes is updated correclty")
       (is (= 4 (:other @status)) "other settings are unaffected"))))
 

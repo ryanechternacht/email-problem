@@ -16,9 +16,9 @@
 
 (deftest genereate-skip-spammy-emails-xf-test
   (testing "Generate Skip Spammy Emails Xf Test"
-    (let [xf (pe/generate-skip-spammy-emails-xf 0.5)
+    (let [xf (pe/generate-skip-spammy-emails-xf 0.7)
           result (into [] xf test-emails)]
-      (is (= 6 (count result)) "spammy emails are skipped"))))
+      (is (= 8 (count result)) "spammy emails are skipped"))))
 
 (deftest add-to-circle-vec-test
   (testing "Add To Circle Vec Test"
