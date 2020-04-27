@@ -4,8 +4,6 @@ Ryan Echternacht's attempt at the spam problem (see spam-problem.org here). This
 
 ## Usage
 
-FIXME: explanation
-
 Run the project directly:
 
     $ clojure -m emails.ladders
